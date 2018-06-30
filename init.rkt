@@ -803,3 +803,537 @@
 
 (one-to-one? '((chocolate chip) (doughy cookie)))
 
+(rember 'a '(b c a))
+(rember 'c '(b c a))
+
+(define rember-f
+  (λ (pred a l)
+    (cond
+      ((null? l) '())
+      ((pred a (car l)) (cdr l))
+      (else (cons (car l)
+                  (rember-f pred a (cdr l)))))))
+
+(rember-f eq? 'a '(b c a))
+(rember-f equal? '(pop corn) '(lemonade (pop corn) and (cake)))
+
+(define eq?-c
+  (λ (a)
+    (lambda (x)
+      (eq? x a))))
+
+(define eq?-salad
+  (eq?-c 'salad))
+
+(eq?-salad 'salad)
+(eq?-salad 'corn)
+
+(define rember-f
+  (lambda (test?)
+    (λ (a l)
+      (cond
+        ((null? l) '())
+        ((test? a (car l)) (cdr l))
+        (else (cons (car l)
+                    ((rember-f test?) a (cdr l))))))))
+
+((rember-f eq?) 'a '(a b c))
+((rember-f eq?) 'a '(c b a))
+;; (rember-f eq? 'a '(a b c))
+
+(define rember-eq?
+  (rember-f eq?))
+
+(rember-eq? 'a '(a b c))
+
+(define insertL-f
+  (λ (test?)
+    (λ (new old l)
+      (cond
+        ((null? l) '())
+        ((test? old (car l)) (cons new (cons old ((insertL-f test?) new old (cdr l)))))
+        (else (cons (car l) ((insertL-f test?) new old (cdr l))))))))
+
+((insertL-f eq?) 'z 'a '(a c b a d e a))
+
+(define insertR-f
+  (lambda (test?)
+    (λ (new old l)
+      (cond
+        ((null? l) '())
+        ((test? old (car l)) (cons old (cons new ((insertR-f test?) new old (cdr l)))))
+        (else (cons (car l) ((insertR-f test?) new old (cdr l))))))))
+
+((insertR-f eq?) 'z 'a '(a c b a d e a))
+
+(define seqL
+  (λ (a b c)
+    (cons a (cons b c))))
+
+(seqL 'a 'b '(c))
+
+(define seqR
+  (lambda (a b c)
+    (cons b (cons a c))))
+
+(seqR 'a 'b '(c))
+
+(define insert-g
+  (λ (seq)
+    (lambda (new old l)
+      (cond
+        ((null? l) '())
+        ((eq? old (car l)) (seq new old ((insert-g seq) new old (cdr l))))
+        (else (cons (car l) ((insert-g seq) new old (cdr l))))))))
+
+(define insertL (insert-g seqL))
+(define insertR (insert-g seqR))
+
+(insertL 'z 'a '(a c b a d e a))
+(insertR 'z 'a '(a c b a d e a))
+
+(define atom-to-function
+  (λ (atom)
+    
+    ))
+
+(define operator
+  (λ (nexp)
+    (car nexp)))
+
+(atom-to-function (operator '(+ 5 3)))
+
+
+(define value
+  (λ (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      (else ((atom-to-function (operator nexp))
+             (value (car nexp))
+             (value (car (cdr car))))))))
+
+(value '(+ (+ 3 5) (* 2 1)))
+
+(define multirember
+  (λ (a lat)
+    (cond
+      ((null? lat) '())
+      ((eq? (car lat) a)
+       (multirember a (cdr lat)))
+      (else (cons (car lat)
+                  (multirember a (cdr lat)))))))
+
+(multirember 'a '(a b c z a))
+
+(define multirember-f
+  (lambda (test?)
+    (λ (a lat)
+     (cond
+       ((null? lat) '())
+       ((test? (car lat) a)
+        (multirember a (cdr lat)))
+       (else (cons (car lat)
+                   (multirember a (cdr lat))))))))
+
+((multirember-f eq?) 'a '(a b c z a))
+
+(define multirember-eq?
+  (multirember-f eq?))
+
+(multirember-eq? 'a '(a b c z a))
+
+(define multiremberT
+  (λ (test? lat)
+    (cond
+      ((null? lat) '())
+      ((test? (car lat)) (multiremberT test? (cdr lat)))
+      (else (cons (car lat)
+                  (multiremberT test? (cdr lat)))))))
+
+(define eq?-a (eq?-c 'a))
+
+(eq?-a 'a)
+
+(multiremberT eq?-a '(a b c a c z))
+
+(define multirember&co
+  (λ (a lat col) ;; col stands for collector or continuation
+    (cond
+      ((null? lat) (col '() '()))
+      ((eq? (car lat) a) (multirember&co a (cdr lat)
+                                         (lambda (newlat seen)
+                                           (col newlat
+                                                (cons (car lat) seen)))))
+      (else (multirember&co a
+                            (cdr lat)
+                            (λ (newlat seen)
+                              (col (cons (car lat) newlat)
+                                   seen)))))))
+
+(define a-friend
+  (λ (x y)
+    (null? y)))
+
+(a-friend 'a 'b)
+(a-friend 'a '())
+
+(multirember&co 'tuna '(strawberries tuna and swordfish) a-friend)
+(multirember&co 'tuna '() a-friend)
+(multirember&co 'tuna '(tuna) a-friend)
+
+(define new-friend
+  (λ (newlat seen)
+    (a-friend newlat
+              (cons (car '(tuna)) seen))))
+
+(new-friend '() '())
+
+(multirember&co 'tuna '(and tuna) a-friend)
+
+;; ->
+(multirember&co 'tuna '(tuna) new-friend)
+(define new-friend
+  (λ (newlat seen)
+    (a-friend (cons 'and newlat) seen)))
+
+;; ->
+(multirember&co 'tuna '() latest-friend)
+;; lat: '(tuna)
+;; col: new-friend
+(define latest-friend
+  (λ (newlat seen)
+    (new-friend newlat (cons 'tuna seen))))
+
+;; ->
+(latest-friend '() '())
+
+;; ->
+(new-friend '() '(tuna))
+
+;; ->
+(a-friend '(and) '(tuna))
+
+;; ->
+(null? '(tuna))
+
+
+(multirember&co 'tuna '(strawberries tuna and swordfish) a-friend)
+(multirember&co 'tuna '(strawberries and swordfish) a-friend)
+
+(multirember&co 'tuna '(strawberries tuna and swordfish) (λ (x y) (length x)))
+
+(define multiinsertLR
+  (lambda (new oldL oldR lat)
+    (cond
+      ((null? lat) '())
+      ((eq? oldL (car lat)) (cons new (cons oldL (multiinsertLR new oldL oldR (cdr lat)))))
+      ((eq? oldR (car lat)) (cons oldR (cons new (multiinsertLR new oldL oldR (cdr lat)))))
+      (else (cons (car lat)
+                  (multiinsertLR new oldL oldR (cdr lat)))))))
+
+(multirember 'a '(a b c z a))
+(multirember&co 'a '(a b c z a) (lambda (x y) x))
+
+
+(multiinsertLR 'z 'a 'b '(a b c d e f g b a))
+
+(define multiinsertLR&co
+  (lambda (new oldL oldR lat col)
+    (cond
+      ((null? lat) (col '() 0 0)) ;; newlat left-insertions right insertions
+      ((eq? oldL (car lat)) (multiinsertLR&co new oldL oldR (cdr lat)
+                                              (lambda (newlat nleft nright)
+                                                (col (cons new (cons oldL newlat))
+                                                     (add1 nleft)
+                                                     nright))))
+      ((eq? oldR (car lat)) (multiinsertLR&co new oldL oldR (cdr lat)
+                                              (λ (newlat nleft nright)
+                                                (col (cons oldR (cons new newlat))
+                                                     nleft
+                                                     (add1 nright)))))
+      (else (multiinsertLR&co new oldL oldR (cdr lat)
+                              (λ (newlat nleft nright)
+                                (col (cons (car lat) newlat)
+                                     nleft
+                                     nright)))))))
+
+(multiinsertLR&co 'z 'a 'b '(a b c d e f g b a) (λ (x y z) z))
+
+(multiinsertLR&co
+ 'cranberries
+ 'fish
+ 'chips
+ '()
+ (λ (x y z) z))
+
+
+(multiinsertLR&co 'salty 'fish 'chips '(chips and fish or fish and chips)
+                  (λ (x y z) z))
+
+(define even?
+  (λ (n)
+    (= (* (quot n 2) 2) n)))
+
+(even? 2)
+(even? 0)
+(even? 1)
+(even? 642)
+(even? 6421)
+
+(define evens-only*
+  (lambda (l)
+    (cond
+      ((null? l) '())
+      ((atom? (car l)) (cond
+                         ((even? (car l)) (cons (car l) (evens-only* (cdr l))))
+                         (else (evens-only* (cdr l)))))
+      ((list? (car l)) (cons (evens-only* (car l))
+                             (evens-only* (cdr l)))))))
+
+(evens-only*
+ '(() (((1 3) (2 4)) (3 (4 3 9 6 5 (5 (6 (((4) (7 3 4))))))))))
+(evens-only*
+ '((9 1 2 8) 3 10 ((9 9) 7 6) 2))
+
+(define evens-only*&co
+  (λ (l col)
+    (cond
+      ((null? l) (col '() 1 0))
+      ((atom? (car l)) (cond
+                         ((even? (car l)) (evens-only*&co (cdr l)
+                                                          (lambda (newlat prod sum)
+                                                            (col
+                                                             (cons (car l) newlat)
+                                                             (* (car l) prod)
+                                                             sum))))
+                         (else (evens-only*&co (cdr l)
+                                               (lambda (newlat prod sum)
+                                                 (col
+                                                  newlat
+                                                  prod
+                                                  (+ (car l) sum)))))))
+      ((list? (car l)) (evens-only*&co (car l)
+                                       (λ (newlat prod sum)
+                                         (evens-only*&co (cdr l)
+                                                         (λ (newlat1 prod1 sum1)
+                                                           (col
+                                                            (cons newlat newlat1)
+                                                            (* prod prod1)
+                                                            (+ sum sum1))))))))))
+
+(define the-last-friend
+  (λ (newl product sum)
+    (cons sum
+          (cons product newl))))
+
+(evens-only*&co '((9 1 2 8) 3 10 ((9 9) 7 6) 2) the-last-friend)
+
+(evens-only*&co '(9 1 2 8)
+                (λ (newlat prod sum)
+                  (evens-only*&co '(3 10 ((9 9) 7 6) 2)
+                                  (λ (newlat1 prod1 sum1)
+                                    (cons
+                                     (+ sum sum1)
+                                     (cons (* prod prod1)
+                                           (cons newlat newlat1)))))))
+
+;; l is '(9 1 2 8)
+;; col is
+(λ (newlat prod sum)
+  (evens-only*&co '(3 10 ((9 9) 7 6) 2)
+                  (λ (newlat1 prod1 sum1)
+                    (cons
+                     (+ sum sum1)
+                     (cons (* prod prod1)
+                           (cons newlat newlat1))))))
+
+(col
+ newlat
+ prod
+ (+ 9 sum))
+
+(evens-only*&co '(1 2 8)
+                (lambda (newlat prod sum)
+                  (evens-only*&co '(3 10 ((9 9) 7 6) 2)
+                                  (λ (newlat1 prod1 sum1)
+                                    (cons
+                                     (+ (+ 9 sum) sum1)
+                                     (cons (* prod prod1)
+                                           (cons newlat newlat1)))))))
+
+;; 因为同构，推算一下
+
+(evens-only*&co '()
+                (lambda (newlat prod sum)
+                  (evens-only*&co '(3 10 ((9 9) 7 6) 2)
+                                  (λ (newlat1 prod1 sum1)
+                                    (cons
+                                     (+ (+ 1 (+ 9 sum)) sum1)
+                                     (cons
+                                      (* (* 8 (* 2 prod)) prod1)
+                                      (cons newlat newlat1)))))))
+
+(evens-only*&co '(3 10 ((9 9) 7 6) 2)
+                (λ (newlat1 prod1 sum1)
+                  (cons
+                   (+ 10 sum1)
+                   (cons
+                    (* 16 prod1)
+                    (cons '() newlat1)))))
+
+caviar
+
+
+(define looking
+  (λ (a lat)
+    (keep-looking a (pick 1 lat) lat)))
+
+(define keep-looking
+  (lambda (a b lat)
+    (cond
+      ((number? (pick b lat)) (keep-looking a (pick b lat) lat))
+      ((atom? (pick b lat)) (eq? a (pick b lat)))
+      (else #f))))
+;; unnatural recursion
+
+(looking 'caviar '(6 2 4 caviar 5 7 3))
+(looking 'caviar '(6 2 grits caviar 5 7 3))
+
+(define second my-second)
+(define shift
+  (lambda (pair)
+    (cond
+      ((null? pair) '())
+      (else (build (first (first pair))
+                   (build (second (first pair))
+                          (second pair)))))))
+
+(define first my-first)
+(shift '((a b) c))
+(shift '((a b) (c d)))
+
+(define align
+  (λ (pora)
+    (cond
+      ((atom? pora) pora)
+      ((a-pair? (first pora))
+       (align (shift pora)))
+      (else (build (first pora)
+                   (align (second pora)))))))
+
+(align '(a b))
+(align '((a b) c))
+(a-pair? (first '((a b) c)))
+(shift '((a b) c))
+
+(align '((a b) (c d)))
+(align '(() (c d)))
+(align '(a b c d))
+(align 'a)
+;; (align '())
+
+(define eternity
+  (λ (x)
+    (eternity x)))
+
+;; (eternity 'x)
+
+
+(define e1
+  (λ (x)
+    (e2 x)))
+
+(define e2
+  (lambda (x)
+    (e1 x)))
+
+(e1 'x)
+
+(define length*
+  (lambda (pora)
+    (cond
+      ((atom? pora) 1)
+      (else (+ (length* (first pora))
+               (length* (second pora)))))))
+
+(length* '((a b) (c d)))
+
+(define numbered?
+  (λ (aexp)
+    (cond
+      ((atom? (car aexp)) (number? aexp))
+      (else (and (numbered? (car aexp))
+            (numbered? (car (cdr (cdr aexp)))))))))
+
+(define weight*
+  (λ (pora)
+    (cond
+      ((atom? pora) 1)
+      (else (+ (* (weight* (first pora)) 2)
+               (weight* (second pora)))))))
+
+(weight* '((a b) c))
+(weight* '(a (b c)))
+
+(define shuffle
+  (λ (pora)
+    (cond
+      ((atom? pora) pora)
+      ((a-pair? (first pora))
+       (shuffle (revpair pora)))
+      (else (build (first pora)
+                   (shuffle (second pora)))))))
+
+(shuffle '(a (b c)))
+(shuffle '(a b))
+(shuffle '((a b) (c d)))
+(revpair '((a b) (c d)))
+
+(define C
+  (λ (n)
+    (cond
+      ((one? n) 1)
+      (else
+       (cond
+         ((even? n) (C (quot n 2)))
+         (else (C (add1 (* 3 n)))))))))
+
+(C 0)
+(C 12343417)
+
+(define A
+  (lambda (n m)
+    (cond
+      ((zero? n) (add1 m))
+      ((zero? m) (A (sub1 n) 1))
+      (else (A (sub1 n)
+               (A n (sub1 m)))))))
+
+(A 1 0)
+(A 1 1)
+(A 2 2)
+(A 4 3)
+(A 3 (A 4 2))
+(A 3 (A 3 (A 4 1)))
+(A 3 (A 3 (A 4 (A 3 (A 2 (A 1 (A 1 (A 2 (A 1 (A 2 0))))))))))
+
+
+(require racket/trace)
+
+(trace A)
+
+(define last-try
+  (λ (x)
+    (and (will-stop? last-try)
+         (eternity x))))
+
+(last-try 1)
+
+;; can describe, but cannot define
+;; (define will-stop? (λ (l) ...))
+
+(λ (l)
+  (cond
+    ((null? l) 0)
+    (else (add1 (eternity (cdr l))))))
+
