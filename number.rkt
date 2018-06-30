@@ -380,3 +380,15 @@
 (equal? 'a '(a))
 (equal? '(a) 'a)
 (equal? '(a (b c)) '(a (b c)))
+
+(define set?
+  (lambda (l)
+    (cond
+      ((null? l) #t)
+      ((member? (car l) (cdr l)) #f)
+      (else (set? (cdr l))))))
+
+(set? '())
+(set? '(1))
+(set? '(1 2 (1 2 ())))
+(set? '(1 2 3 1))
