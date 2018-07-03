@@ -1707,3 +1707,20 @@ caviar
    (x y)
    (cons z x))
  '((a b c) (d e f)))
+
+
+
+
+
+(define succ
+  (lambda (n)
+    (lambda (f)
+      (lambda (x)
+        (f ((n f) x))))))
+
+(define plus
+  (lambda (m)
+    (lambda (n)
+      (lambda (f)
+        (lambda (x)
+          (m (f ((n f) x))))))))
