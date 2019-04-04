@@ -19,9 +19,9 @@
 (define lat?
   (lambda (l)
     (cond
-     ((null? l) #t)
-     ((atom? (car l)) (lat? (cdr l)))
-     (else #f))))
+      ((null? l) #t)
+      ((atom? (car l)) (lat? (cdr l)))
+      (else #f))))
 
 (lat? '())
 (lat? '(Jack))
@@ -30,9 +30,9 @@
 (define member?
   (lambda (x l)
     (cond
-     ((null? l) #f)
-     (else (or (eq? x (car l))
-               (member? x (cdr l)))))))
+      ((null? l) #f)
+      (else (or (eq? x (car l))
+                (member? x (cdr l)))))))
 
 (eq? a a)
 (member? 'b '(a b))
@@ -40,10 +40,10 @@
 (define rember
   (lambda (x l)
     (cond
-     ((null? l) '())
-     ((eq? x (car l)) (cdr l))
-     (else (cons (car l)
-                 (rember x (cdr l)))))))
+      ((null? l) '())
+      ((eq? x (car l)) (cdr l))
+      (else (cons (car l)
+                  (rember x (cdr l)))))))
 
 (rember 'a '())
 (rember 'a '(a))
@@ -56,11 +56,11 @@
 (define firsts
   (lambda (l)
     (cond
-     ((null? l) '())
-     (else (cond
-            ((null? (car l)) (firsts (cdr l)))
-            (else (cons (car (car l))
-                        (firsts (cdr l)))))))))
+      ((null? l) '())
+      (else (cond
+              ((null? (car l)) (firsts (cdr l)))
+              (else (cons (car (car l))
+                          (firsts (cdr l)))))))))
 (firsts '())
 (firsts '(() () ()))
 (firsts '((a b) (b c) (c a)))
@@ -68,28 +68,28 @@
 (define insertR
   (lambda (n o l)
     (cond
-     ((null? l) '())
-     ((eq? o (car l)) (cons o (cons n (cdr l))))
-     (else (cons (car l) (insertR n o (cdr l)))))))
+      ((null? l) '())
+      ((eq? o (car l)) (cons o (cons n (cdr l))))
+      (else (cons (car l) (insertR n o (cdr l)))))))
 
 (insertR 'g 'e '(a b c d e f))
 
 (define insertL
   (lambda (new old lat)
     (cond
-     ((null? lat) '())
-     ((eq? old (car lat)) (cons new lat))
-     (else (cons (car lat)
-                 (insertL new old (cdr lat)))))))
+      ((null? lat) '())
+      ((eq? old (car lat)) (cons new lat))
+      (else (cons (car lat)
+                  (insertL new old (cdr lat)))))))
 
 (insertL 'g 'e '(a b c d e f))
 
 (define subst
   (lambda (new old lat)
     (cond
-     ((null? lat) '())
-     ((eq? old (car lat)) (cons new (cdr lat)))
-     (else (cons (car lat) (subst new old (cdr lat)))))))
+      ((null? lat) '())
+      ((eq? old (car lat)) (cons new (cdr lat)))
+      (else (cons (car lat) (subst new old (cdr lat)))))))
 
 (subst 'g 'e '(a b c d e f))
 (subst 'g 'e '())
@@ -97,12 +97,12 @@
 (define subst2
   (lambda (new o1 o2 lat)
     (cond
-     ((null? lat) '())
-     ((or
-       (eq? o1 (car lat))
-       (eq? o2 (car lat))) (cons new (cdr lat)))
-     (else (cons (car lat)
-                 (subst2 new o1 o2 (cdr lat)))))))
+      ((null? lat) '())
+      ((or
+        (eq? o1 (car lat))
+        (eq? o2 (car lat))) (cons new (cdr lat)))
+      (else (cons (car lat)
+                  (subst2 new o1 o2 (cdr lat)))))))
 
 (subst2 'g 'e 'f '(a b c d e f))
 (subst2 'g 'f 'e '(a b c d e f))
@@ -110,43 +110,43 @@
 (define multirember
   (lambda (a lat)
     (cond
-     ((null? lat) '())
-     ((eq? a (car lat)) (multirember a (cdr lat)))
-     (else (cons (car lat)
-                 (multirember a (cdr lat)))))))
+      ((null? lat) '())
+      ((eq? a (car lat)) (multirember a (cdr lat)))
+      (else (cons (car lat)
+                  (multirember a (cdr lat)))))))
 
 (multirember 'a '(c a e b a c))
 
 (define multiinsertR
   (lambda (new old lat)
     (cond
-     ((null? lat) '())
-     ((eq? old (car lat)) (cons old
-                                (cons new
-                                      (multiinsertR new old (cdr lat)))))
-     (else (cons (car lat)
-                 (multiinsertR new old (cdr lat)))))))
+      ((null? lat) '())
+      ((eq? old (car lat)) (cons old
+                                 (cons new
+                                       (multiinsertR new old (cdr lat)))))
+      (else (cons (car lat)
+                  (multiinsertR new old (cdr lat)))))))
 
 (multiinsertR 'a 'a '(c a b d a c))
 
 (define multiinsertL
   (lambda (new old lat)
     (cond
-     ((null? lat) '())
-     ((eq? old (car lat)) (cons new
-                                (cons old
-                                      (multiinsertL new old (cdr lat)))))
-     (else (cons (car lat)
-                 (multiinsertL new old (cdr lat)))))))
+      ((null? lat) '())
+      ((eq? old (car lat)) (cons new
+                                 (cons old
+                                       (multiinsertL new old (cdr lat)))))
+      (else (cons (car lat)
+                  (multiinsertL new old (cdr lat)))))))
 
 (multiinsertL 'Z 'a '(c a b d a))
 
 (define multisubst
   (lambda (new old lat)
     (cond
-     ((null? lat) '())
-     ((eq? old (car lat)) (cons new (multisubst new old (cdr lat))))
-     (else (cons (car lat) (multisubst new old (cdr lat)))))))
+      ((null? lat) '())
+      ((eq? old (car lat)) (cons new (multisubst new old (cdr lat))))
+      (else (cons (car lat) (multisubst new old (cdr lat)))))))
 
 (multisubst 'Z 'a '(c a b d a))
 
@@ -164,23 +164,23 @@
 (define my-add
   (lambda (a b)
     (cond
-     ((zero? a) b)
-     (else (my-add (sub1 a) (add1 b))))))
+      ((zero? a) b)
+      (else (my-add (sub1 a) (add1 b))))))
 
 (my-add 16 12)
 
 (define my-sub
   (lambda (a b)
     (cond
-     ((zero? b) a)
-     (else (sub1 (my-sub a (sub1 b)))))))
+      ((zero? b) a)
+      (else (sub1 (my-sub a (sub1 b)))))))
 
 (define tup?
   (lambda (l)
     (cond
-     ((null? l) #t)
-     ((number? (car l)) (tup? (cdr l)))
-     (else #f))))
+      ((null? l) #t)
+      ((number? (car l)) (tup? (cdr l)))
+      (else #f))))
 
 (tup? '())
 (tup? '(1 2 3))
@@ -190,8 +190,8 @@
 (define addtup
   (lambda (tup)
     (cond
-     ((null? tup) 0)
-     (else (+ (car tup) (addtup (cdr tup)))))))
+      ((null? tup) 0)
+      (else (+ (car tup) (addtup (cdr tup)))))))
 
 (addtup '(1 2 3 4))
 
@@ -202,8 +202,8 @@
 (define my-*
   (lambda (m n)
     (cond
-     ((zero? m) 0)
-     (else (+ n (my-* (sub1 m) n))))))
+      ((zero? m) 0)
+      (else (+ n (my-* (sub1 m) n))))))
 
 (my-* 1 2)
 (my-* 3 5)
@@ -213,10 +213,10 @@
 (define tup+
   (lambda (tup1 tup2)
     (cond
-     ((null? tup1) tup2)
-     ((null? tup2) tup1)
-     (else (cons (+ (car tup1) (car tup2))
-                 (tup+ (cdr tup1) (cdr tup2)))))))
+      ((null? tup1) tup2)
+      ((null? tup2) tup1)
+      (else (cons (+ (car tup1) (car tup2))
+                  (tup+ (cdr tup1) (cdr tup2)))))))
 
 (tup+ '(1 2) '(3 4 5))
 (tup+ '(1 2 3) '(1 2))
@@ -226,9 +226,9 @@
 (define my->
   (lambda (n m)
     (cond
-     ((zero? n) #f)
-     ((zero? m) #t)
-     (else (my-> (sub1 n) (sub1 m))))))
+      ((zero? n) #f)
+      ((zero? m) #t)
+      (else (my-> (sub1 n) (sub1 m))))))
 
 (my-> 3 4)
 (my-> 0 0)
@@ -238,9 +238,9 @@
 (define my-<
   (lambda (n m)
     (cond
-     ((zero? m) #f)
-     ((zero? n) #t)
-     (else (my-< (sub1 n) (sub1 m))))))
+      ((zero? m) #f)
+      ((zero? n) #t)
+      (else (my-< (sub1 n) (sub1 m))))))
 
 (my-< 3 4)
 (my-< 0 0)
@@ -250,9 +250,9 @@
 (define my-=
   (lambda (n m)
     (cond
-     ((zero? n) (zero? m))
-     ((zero? m) #f)
-     (else (my-= (sub1 n) (sub1 m))))))
+      ((zero? n) (zero? m))
+      ((zero? m) #f)
+      (else (my-= (sub1 n) (sub1 m))))))
 
 (my-= 3 4)
 (my-= 0 0)
@@ -262,15 +262,15 @@
 (define my-=
   (lambda (n m)
     (cond
-     ((my-< n m) #f)
-     ((my-> n m) #f)
-     (else #t))))
+      ((my-< n m) #f)
+      ((my-> n m) #f)
+      (else #t))))
 
 (define ^
   (lambda (n m)
     (cond
-     ((zero? m) 1)
-     (else (* n (^ n (sub1 m)))))))
+      ((zero? m) 1)
+      (else (* n (^ n (sub1 m)))))))
 
 (^ 2 3)
 (^ 0 3)
@@ -280,8 +280,8 @@
 (define quot
   (lambda (n m)
     (cond
-     ((< n m) 0)
-     (else (add1 (quot (- n m) m))))))
+      ((< n m) 0)
+      (else (add1 (quot (- n m) m))))))
 
 (quot 5 10)
 (quot 10 5)
@@ -294,8 +294,8 @@
 (define my-length
   (lambda (lat)
     (cond
-     ((null? lat) 0)
-     (else (add1 (my-length (cdr lat)))))))
+      ((null? lat) 0)
+      (else (add1 (my-length (cdr lat)))))))
 
 (my-length '())
 (my-length '(1 2 3))
@@ -303,8 +303,8 @@
 (define pick
   (lambda (n lat)
     (cond
-     ((zero? (sub1 n)) (car lat))
-     (else (pick (sub1 n) (cdr lat))))))
+      ((zero? (sub1 n)) (car lat))
+      (else (pick (sub1 n) (cdr lat))))))
 
 (pick 1 '(1 2))
 (pick 1 '(1))
@@ -312,8 +312,8 @@
 (define rempick
   (lambda (n lat)
     (cond
-     ((zero? (sub1 n)) (cdr lat))
-     (else (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
+      ((zero? (sub1 n)) (cdr lat))
+      (else (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
 
 (rempick 1 '(a b c d e))
 (rempick 5 '(a b c d e))
@@ -324,18 +324,18 @@
 (define no-num
   (lambda (lat)
     (cond
-     ((null? lat) '())
-     ((number? (car lat)) (no-num (cdr lat)))
-     (else (cons (car lat) (no-num (cdr lat)))))))
+      ((null? lat) '())
+      ((number? (car lat)) (no-num (cdr lat)))
+      (else (cons (car lat) (no-num (cdr lat)))))))
 
 (no-num '(1 a 2 b 3 c))
 
 (define all-nums
   (lambda (lat)
     (cond
-     ((null? lat) '())
-     ((number? (car lat)) (cons (car lat) (all-nums (cdr lat))))
-     (else (all-nums (cdr lat))))))
+      ((null? lat) '())
+      ((number? (car lat)) (cons (car lat) (all-nums (cdr lat))))
+      (else (all-nums (cdr lat))))))
 
 (all-nums '(1 a 2 b 3 c 4))
 
@@ -351,9 +351,9 @@
 (define eqan?
   (lambda (a1 a2)
     (cond
-     ((and (number? a1) (number? a2)) (= a1 a2))
-     ((and (atom? a1) (atom? a2)) (eq? a1 a2))
-     (else #f))))
+      ((and (number? a1) (number? a2)) (= a1 a2))
+      ((and (atom? a1) (atom? a2)) (eq? a1 a2))
+      (else #f))))
 
 (eqan? 1 1)
 (eqan? 1 2)
@@ -364,17 +364,17 @@
 (define occur
   (lambda (a lat)
     (cond
-     ((null? lat) 0)
-     ((eq? a (car lat)) (add1 (occur a (cdr lat))))
-     (else (occur a (cdr lat))))))
+      ((null? lat) 0)
+      ((eq? a (car lat)) (add1 (occur a (cdr lat))))
+      (else (occur a (cdr lat))))))
 
 (occur 'a '(1 2 3 a a b c a))
 
 (define one?
   (lambda (x)
     (cond
-     ((zero? (sub1 x)) #t)
-     (else #f))))
+      ((zero? (sub1 x)) #t)
+      (else #f))))
 
 (define one?
   (lambda (x)
@@ -392,25 +392,25 @@
 (define rempick ;; use one
   (lambda (n lat)
     (cond
-     ((one? n) (cdr lat))
-     (else (cons (car lat)
-                 (repick (sub1 n) (cdr lat)))))))
+      ((one? n) (cdr lat))
+      (else (cons (car lat)
+                  (repick (sub1 n) (cdr lat)))))))
 
 (rempick 1 '(1 2))
 
 (define rember*
   (lambda (a lat)
     (cond
-     ((null? lat) '())
-     ((list? (car lat)) (cons (rember* a (car lat))
-                              (rember* a (cdr lat))))
-     ((atom? (car lat)) (cond
-                         ((eq? a (car lat)) (rember* a (cdr lat)))
-                         (else (cons (car lat) (rember* a (cdr lat)))))))))
+      ((null? lat) '())
+      ((list? (car lat)) (cons (rember* a (car lat))
+                               (rember* a (cdr lat))))
+      ((atom? (car lat)) (cond
+                           ((eq? a (car lat)) (rember* a (cdr lat)))
+                           (else (cons (car lat) (rember* a (cdr lat)))))))))
 
 
 (rember* 'cup '((coffee) cup ((tea) cup)
-                (and (hick)) cup))
+                         (and (hick)) cup))
 
 (rember* 'sauce '(((tomato sauce))
                   ((bean) sauce)
@@ -420,20 +420,20 @@
 (define lat?
   (lambda (l)
     (cond
-     ((null? l) #t)
-     ((atom? (car l)) (lat? (cdr l)))
-     (else #f))))
+      ((null? l) #t)
+      ((atom? (car l)) (lat? (cdr l)))
+      (else #f))))
 
 (define insertR*
   (lambda (new old lat)
     (cond
-     ((null? lat) '())
-     ((list? (car lat)) (cons (insertR* new old (car lat))
-                              (insertR* new old (cdr lat))))
-     ((atom? (car lat))
-      (cond
-       ((eq? old (car lat)) (cons old (cons new (cdr lat))))
-       (else (cons (car lat) (insertR* new old (cdr lat)))))))))
+      ((null? lat) '())
+      ((list? (car lat)) (cons (insertR* new old (car lat))
+                               (insertR* new old (cdr lat))))
+      ((atom? (car lat))
+       (cond
+         ((eq? old (car lat)) (cons old (cons new (cdr lat))))
+         (else (cons (car lat) (insertR* new old (cdr lat)))))))))
 
 (insertR* 'roast 'chuck
           '((how much (wood))
@@ -446,12 +446,12 @@
 (define occur*
   (lambda (a lat)
     (cond
-     ((null? lat) 0)
-     ((list? (car lat)) (+ (occur* a (car lat)) (occur* a (cdr lat))))
-     ((atom? (car lat))
-      (cond
-       ((eq? a (car lat)) (add1 (occur* a (cdr lat))))
-       (else (occur* a (cdr lat))))))))
+      ((null? lat) 0)
+      ((list? (car lat)) (+ (occur* a (car lat)) (occur* a (cdr lat))))
+      ((atom? (car lat))
+       (cond
+         ((eq? a (car lat)) (add1 (occur* a (cdr lat))))
+         (else (occur* a (cdr lat))))))))
 
 (occur* 'a '())
 (occur* 'a '(a a a c))
@@ -460,13 +460,13 @@
 (define subst*
   (lambda (new old lat)
     (cond
-     ((null? lat) '())
-     ((list? (car lat)) (cons (subst* new old (car lat))
-                              (subst* new old (cdr lat))))
-     ((atom? (car lat))
-      (cond
-       ((eq? old (car lat)) (cons new (subst* new old (cdr lat))))
-       (else (cons (car lat) (subst* new old (cdr lat)))))))))
+      ((null? lat) '())
+      ((list? (car lat)) (cons (subst* new old (car lat))
+                               (subst* new old (cdr lat))))
+      ((atom? (car lat))
+       (cond
+         ((eq? old (car lat)) (cons new (subst* new old (cdr lat))))
+         (else (cons (car lat) (subst* new old (cdr lat)))))))))
 
 (subst* 'z 'a '(a a a))
 (subst* 'z 'a '())
@@ -475,13 +475,13 @@
 (define insertL*
   (lambda (new old lat)
     (cond
-     ((null? lat) '())
-     ((list? (car lat)) (cons (insertL* new old (car lat))
-                              (insertL* new old (cdr lat))))
-     ((atom? (car lat)) ;; else
-      (cond
-       ((eq? old (car lat)) (cons new (cons old (insertL* new old (cdr lat)))))
-       (else (cons (car lat) (insertL* new old (cdr lat)))))))))
+      ((null? lat) '())
+      ((list? (car lat)) (cons (insertL* new old (car lat))
+                               (insertL* new old (cdr lat))))
+      ((atom? (car lat)) ;; else
+       (cond
+         ((eq? old (car lat)) (cons new (cons old (insertL* new old (cdr lat)))))
+         (else (cons (car lat) (insertL* new old (cdr lat)))))))))
 
 (insertL* 'roast 'chuck
           '((how much (wood))
@@ -494,13 +494,13 @@
 (define member*
   (lambda (a lat)
     (cond
-     ((null? lat) #f)
-     ((list? (car lat)) (or (member* a (car lat))
-                            (member* a (cdr lat))))
-     ((atom? (car lat)) ;; else
-      (cond
-       ((eq? a (car lat)) #t)
-       (else (member* a (cdr lat))))))))
+      ((null? lat) #f)
+      ((list? (car lat)) (or (member* a (car lat))
+                             (member* a (cdr lat))))
+      ((atom? (car lat)) ;; else
+       (cond
+         ((eq? a (car lat)) #t)
+         (else (member* a (cdr lat))))))))
 
 (member* 'a '(a b c))
 (member* 'a '())
@@ -509,8 +509,8 @@
 (define leftmost
   (lambda (lat)
     (cond
-     ((atom? (car lat)) (car lat))
-     ((list? (car lat)) (leftmost (car lat))))))
+      ((atom? (car lat)) (car lat))
+      ((list? (car lat)) (leftmost (car lat))))))
 
 (leftmost '()) ;; should error
 (leftmost '(((((()))))))
@@ -522,12 +522,12 @@
 (define eqlist?
   (lambda (l1 l2)
     (cond
-     ((and (null? l1) (null? l2)) #t)
-     ((or (null? l1) (null? l2)) #f)
-     ((and (atom? l1) (atom? l2)) (eqan? l1 l2))
-     ((and (list? l1) (list? l2)) (and (eqlist? (car l1) (car l2))
-                                       (eqlist? (cdr l1) (cdr l2))))
-     (else #f))))
+      ((and (null? l1) (null? l2)) #t)
+      ((or (null? l1) (null? l2)) #f)
+      ((and (atom? l1) (atom? l2)) (eqan? l1 l2))
+      ((and (list? l1) (list? l2)) (and (eqlist? (car l1) (car l2))
+                                        (eqlist? (cdr l1) (cdr l2))))
+      (else #f))))
 
 
 (eqlist? 1 1)
@@ -539,9 +539,9 @@
 (define rember
   (lambda (s l)
     (cond
-     ((null? l) '())
-     ((eqlist? s (car l)) (rember s (cdr l)))
-     (else (cons (car l) (rember s (cdr l)))))))
+      ((null? l) '())
+      ((eqlist? s (car l)) (rember s (cdr l)))
+      (else (cons (car l) (rember s (cdr l)))))))
 
 (rember '(a) '((a) b c d))
 (rember '(a) '(() (a) (a b)))
@@ -550,12 +550,12 @@
 (define equal?
   (lambda (l1 l2)
     (cond
-     ((and (null? l1) (null? l2)) #t)
-     ((or (null? l1) (null? l2)) #f)
-     ((and (atom? l1) (atom? l2)) (eq? l1 l2))
-     ((and (list? l1) (list? l2)) (and (equal? (car l1) (car l2))
-                                       (equal? (cdr l1) (cdr l2))))
-     (else #f))))
+      ((and (null? l1) (null? l2)) #t)
+      ((or (null? l1) (null? l2)) #f)
+      ((and (atom? l1) (atom? l2)) (eq? l1 l2))
+      ((and (list? l1) (list? l2)) (and (equal? (car l1) (car l2))
+                                        (equal? (cdr l1) (cdr l2))))
+      (else #f))))
 
 (equal? '() '())
 (equal? '() 'a)
@@ -586,17 +586,17 @@
 (define member?
   (lambda (x l)
     (cond
-     ((null? l) #f)
-     (else (or (equal? x (car l))
-               (member? x (cdr l)))))))
+      ((null? l) #f)
+      (else (or (equal? x (car l))
+                (member? x (cdr l)))))))
 
 
 (define makeset
   (lambda (l)
     (cond
-     ((null? l) l)
-     ((member? (car l) (cdr l)) (makeset (cdr l)))
-     (else (cons (car l) (makeset (cdr l)))))))
+      ((null? l) l)
+      ((member? (car l) (cdr l)) (makeset (cdr l)))
+      (else (cons (car l) (makeset (cdr l)))))))
 
 (makeset '())
 (makeset '(1))
@@ -606,9 +606,9 @@
 (define subset?
   (lambda (set1 set2)
     (cond
-     ((null? set1) #t)
-     ((member? (car set1) set2) (subset? (cdr set1) set2))
-     (else #f))))
+      ((null? set1) #t)
+      ((member? (car set1) set2) (subset? (cdr set1) set2))
+      (else #f))))
 
 (subset? '() '(1 2))
 (subset? '(2) '(1 2))
@@ -628,9 +628,9 @@
 (define intersect?
   (lambda (set1 set2)
     (cond
-     ((null? set1) #f)
-     ((member? (car set1) set2) #t)
-     (else (intersect? (cdr set1) set2)))))
+      ((null? set1) #f)
+      ((member? (car set1) set2) #t)
+      (else (intersect? (cdr set1) set2)))))
 
 (intersect? '(1) '(2))
 (intersect? '(1) '(2 1))
@@ -641,9 +641,9 @@
 (define intersect
   (lambda (set1 set2)
     (cond
-     ((null? set1) '())
-     ((member? (car set1) set2) (cons (car set1) (intersect (cdr set1) set2)))
-     (else (intersect (cdr set1) set2)))))
+      ((null? set1) '())
+      ((member? (car set1) set2) (cons (car set1) (intersect (cdr set1) set2)))
+      (else (intersect (cdr set1) set2)))))
 
 (intersect '() '(1 2 3))
 (intersect '(1 2 3) '())
@@ -655,9 +655,9 @@
 (define union
   (lambda (set1 set2)
     (cond
-     ((null? set1) set2)
-     ((member? (car set1) set2) (union (cdr set1) set2))
-     (else (cons (car set1) (union (cdr set1) set2))))))
+      ((null? set1) set2)
+      ((member? (car set1) set2) (union (cdr set1) set2))
+      (else (cons (car set1) (union (cdr set1) set2))))))
 
 (union '() '(1 2 3))
 (union '(1 2 3) '())
@@ -669,20 +669,20 @@
 (define difference
   (lambda (set1 set2)
     (cond
-     ((null? set1) '())
-     ((member? (car set1) set2) (difference (cdr set1) set2))
-     (else (cons (car set1) (difference (cdr set1) set2))))))
+      ((null? set1) '())
+      ((member? (car set1) set2) (difference (cdr set1) set2))
+      (else (cons (car set1) (difference (cdr set1) set2))))))
 
 (difference '(1 2 3) '(2 3 4))
 
 (define intersectall
   (lambda (lset)
     (cond
-     ((null? lset) '())
-     ((null? (cdr lset)) (car lset))
-     (else (intersectall (cons (intersect (car lset)
-                                         (car (cdr lset)))
-                              (cdr (cdr lset))))))))
+      ((null? lset) '())
+      ((null? (cdr lset)) (car lset))
+      (else (intersectall (cons (intersect (car lset)
+                                           (car (cdr lset)))
+                                (cdr (cdr lset))))))))
 
 (intersectall '((1 2 3) (2 3 4)))
 (intersectall '((1 2 3) (2 3 4) (3 4 5)))
@@ -690,11 +690,11 @@
 (define a-pair?
   (lambda (l)
     (cond
-     ((null? l) #f)
-     ((atom? l) #f)
-     ((null? (cdr l)) #f)
-     ((null? (cdr (cdr l))) #t)
-     (else #f))))
+      ((null? l) #f)
+      ((atom? l) #f)
+      ((null? (cdr l)) #f)
+      ((null? (cdr (cdr l))) #t)
+      (else #f))))
 
 (a-pair? '())
 (a-pair? '(1))
@@ -728,9 +728,9 @@
 (define pairs?
   (lambda (l)
     (cond
-     ((null? l) #t)
-     ((pair? (car l)) (pairs? (cdr l)))
-     (else #f))))
+      ((null? l) #t)
+      ((pair? (car l)) (pairs? (cdr l)))
+      (else #f))))
 
 (pairs? '((1 2) () (3 4)))
 (pairs? '((1 2) (5 7) (3 4)))
@@ -754,11 +754,11 @@
 (define revrel
   (lambda (rel)
     (cond
-     ((null? rel) '())
-     (else (cons (build
-                  (car (cdr (car rel)))
-                  (car (car rel)))
-                 (revrel (cdr rel)))))))
+      ((null? rel) '())
+      (else (cons (build
+                   (car (cdr (car rel)))
+                   (car (car rel)))
+                  (revrel (cdr rel)))))))
 
 (revrel '((8 a) (pumpkin pie) (got sick)))
 
@@ -771,18 +771,18 @@
 (define revrel
   (lambda (rel)
     (cond
-     ((null? rel) '())
-     (else (cons (revpair (car rel))
-                 (revrel (cdr rel)))))))
+      ((null? rel) '())
+      (else (cons (revpair (car rel))
+                  (revrel (cdr rel)))))))
 
 (fun? '((8 3) (4 2) (7 6) (6 2) (3 4)))
 
 (define seconds
   (lambda (l)
     (cond
-     ((null? l) '())
-     (else (cons (car (cdr (car l)))
-                 (seconds (cdr l)))))))
+      ((null? l) '())
+      (else (cons (car (cdr (car l)))
+                  (seconds (cdr l)))))))
 
 (seconds '())
 (seconds '((1 2)))
@@ -904,10 +904,10 @@
   (insert-g seqS))
 
 (lambda (new old l)
-      (cond
-        ((null? l) '())
-        ((eq? old (car l)) (seqS new old (recur new old (cdr l))))
-        (else (cons (car l) (recur new old (cdr l))))))
+  (cond
+    ((null? l) '())
+    ((eq? old (car l)) (seqS new old (recur new old (cdr l))))
+    (else (cons (car l) (recur new old (cdr l))))))
 
 (subst 'g 'e '(a b c d e f))
 (subst 'g 'e '())
@@ -958,12 +958,12 @@
 (define multirember-f
   (lambda (test?)
     (λ (a lat)
-     (cond
-       ((null? lat) '())
-       ((test? (car lat) a)
-        (multirember a (cdr lat)))
-       (else (cons (car lat)
-                   (multirember a (cdr lat))))))))
+      (cond
+        ((null? lat) '())
+        ((test? (car lat) a)
+         (multirember a (cdr lat)))
+        (else (cons (car lat)
+                    (multirember a (cdr lat))))))))
 
 ((multirember-f eq?) 'a '(a b c z a))
 
@@ -1293,7 +1293,7 @@ caviar
     (cond
       ((atom? (car aexp)) (number? aexp))
       (else (and (numbered? (car aexp))
-            (numbered? (car (cdr (cdr aexp)))))))))
+                 (numbered? (car (cdr (cdr aexp)))))))))
 
 (define weight*
   (λ (pora)
@@ -1369,7 +1369,7 @@ caviar
 
 
 (((lambda (mk-length)
-          (mk-length mk-length))
+    (mk-length mk-length))
   (λ (mk-length)
     (lambda (l)
       (cond
@@ -1378,6 +1378,35 @@ caviar
                ((mk-length eternity)
                 (cdr l))))))))
  '(apples))
+
+;; go step the above expression
+
+;; and get
+
+((lambda (x)
+   (add1
+    ((lambda (l)
+       (cond
+         ((null? l) 0)
+         (else (add1
+                ((eternity eternity)
+                 (cdr l))))))
+     (cdr x))))
+ '(apples))
+
+;; then
+
+(add1
+ ((lambda (l)
+    (cond
+      ((null? l) 0) ;; wahhhh...
+      (else (add1
+             ((eternity eternity)
+              (cdr l))))))
+  '()))
+
+;; end with 1!!!
+
 
 ((lambda (l)
    (cond
@@ -1406,19 +1435,19 @@ caviar
         ((null? l) 0)
         (else (add1 (length (cdr l)))))))
   ((lambda (mk-length)
-    ((lambda (length)
-       (lambda (l)
-         (cond
-           ((null? l) 0)
-           (else (add1 (length (cdr l)))))))
-     (mk-length mk-length)))
+     ((lambda (length)
+        (lambda (l)
+          (cond
+            ((null? l) 0)
+            (else (add1 (length (cdr l)))))))
+      (mk-length mk-length)))
    (lambda (mk-length)
-    ((lambda (length)
-       (lambda (l)
-         (cond
-           ((null? l) 0)
-           (else (add1 (length (cdr l)))))))
-     (mk-length mk-length)))))
+     ((lambda (length)
+        (lambda (l)
+          (cond
+            ((null? l) 0)
+            (else (add1 (length (cdr l)))))))
+      (mk-length mk-length)))))
  '(apples))
 
 
@@ -1427,6 +1456,214 @@ caviar
     ((lambda (f) (f f))
      (λ (f)
        (le (λ (x) ((f f) x)))))))
+
+;;  (Y f) = fixpoint-of-f
+;; and   (f fixpoint-of-f) = fixpoint-of-f
+;; (Y f) = fixpoint-of-f = (f fixpoint-of-f) = (f (Y f))
+
+(define Y
+  (lambda (f)
+    (f (Y f))))
+
+;; However, there are two caveats regarding this definition of Y:
+
+;; It will only work in a lazy language (see below).
+
+;; It is not a combinator, because the Y in the body of the definition is a free variable which is only bound once the definition is complete. In other words, we couldn't just take the body of this version of Y and plop it in wherever we needed it, because it requires that the name Y be defined somewhere.
+
+(define almost-factorial
+  (lambda (f)
+    (lambda (n)
+      (if (= n 0)
+          1
+          (* n (f (- n 1)))))))
+
+(define factorial (Y almost-factorial))
+
+((Y almost-factorial) 5) ;; 120
+
+;; this works because in some Scheme implementation,
+;; it uses non-strict evaluation, or lazy evaluation,
+;; or normal order, or call by need??
+;; as opposed to :
+;; strict evaluation, eager evaluation, applicative order,
+;; and call by value.
+
+;; there are also:
+;; call by reference, call by sharing, call by copy-restore
+;; for applicative order;
+;; call by name, call by macro expansion
+;; for normal order;
+;; call by future, Optimistic evaluation
+;; for Nondeterministic strategies.
+
+;; refer to https://en.wikipedia.org/wiki/Evaluation_strategy#Applicative_order
+
+
+;; why the following Y works in a strict language?
+
+(define Y
+  (lambda (f)
+    (f (lambda (x) ((Y f) x)))))
+
+(define factorial
+  ((lambda (f) (f (lambda (x) ((Y f) x))))
+   almost-factorial))
+
+(define factorial
+  (lambda (n)
+    (if (= n 0)
+        1
+        (* n ((Y almost-factorial) (- n 1))))))
+
+(define almost-factorial
+  (lambda (f)
+    (lambda (n)
+      (if (= n 0)
+          1
+          (* n (f (- n 1)))))))
+
+(define Y
+  (lambda (f)
+    (f (Y f))))
+;; is a valid definition of Y but not a combinator
+
+
+(define (part-factorial self n)
+  (if (= n 0)
+      1
+      (* n (self self (- n 1)))))
+
+(part-factorial part-factorial 5)
+
+(define (part-factorial self)
+  (λ (n)
+    (if (= n 0)
+        1
+        (* n ((self self) (- n 1))))))
+
+((part-factorial part-factorial) 5)
+
+(define factorial (part-factorial part-factorial))
+(factorial 5)
+
+;; strict language will infinite loop
+;; lazy language will work
+(define (part-factorial self)
+  (let ((f (self self))) ;; <-- infinite loop
+    (λ (n)
+      (if (= n 0)
+          1
+          (* n (f (- n 1)))))))
+
+(define (part-factorial self)
+  ((lambda (f)
+     (lambda (n)
+       (if (= n 0)
+           1
+           (* n (f (- n 1))))))
+   (self self)))
+
+
+(define (part-factorial self)
+  (almost-factorial
+   (self self)))
+
+  (define part-factorial
+    (lambda (self)
+      (almost-factorial
+       (self self))))
+
+  (define almost-factorial
+    (lambda (f)
+      (lambda (n)
+        (if (= n 0)
+            1
+            (* n (f (- n 1)))))))
+
+  (define factorial
+    (let ((part-factorial (lambda (self) 
+                            (almost-factorial 
+                              (self self)))))
+      (part-factorial part-factorial)))
+
+  (define factorial
+    (let ((x (lambda (self) 
+               (almost-factorial (self self)))))
+      (x x)))
+
+  (define factorial
+    ((λ (x) (x x))
+     (lambda (self) 
+       (almost-factorial (self self)))))
+
+  (define factorial
+    ((λ (x) (x x))
+     (lambda (x) 
+       (almost-factorial (x x)))))
+
+(define (Y f)
+  ((λ (x) (x x))
+   (λ (x)
+     (f (x x)))))
+
+(define Y
+  (λ (f)
+    ((λ (x) (x x))
+     (λ (x)
+       (f (x x))))))
+
+((Y almost-factorial) 5)
+
+(define factorial (part-factorial part-factorial))
+(factorial 5)
+
+;; in strict language
+
+(define almost-factorial
+  (lambda (f)
+    (lambda (n)
+      (if (= n 0)
+          1
+          (* n (f (- n 1)))))))
+
+(define factorial
+  ((λ (x) (x x))
+   (λ (self)
+     (almost-factorial (self self)))))
+
+(define (make-recursive f)
+  ((λ (x) (f (x x)))
+   (λ (x) (f (x x)))))
+
+(define (make-recursive f)
+  ((λ (x) (x x))
+   (lambda (x) (f (x x)))))
+
+(define factorial (make-recursive almost-factorial))
+
+(define make-recursive
+  (λ (f)
+    ((λ (x) (lambda (a) ((x x) a)))
+     (λ (x) (f (lambda (a) ((x x) a)))))))
+
+(define Y
+  (λ (f)
+    ((lambda (x) (x x))
+     (λ (x) (f (lambda (y) ((x x) y)))))))
+
+(define Y 
+    (lambda (f)
+      ((lambda (x) (f (lambda (y) ((x x) y))))
+       (lambda (x) (f (lambda (y) ((x x) y)))))))
+
+(define Y 
+    (lambda (f)
+      ((lambda (x) (x x))
+       (lambda (x) (f (lambda (y) ((x x) y)))))))
+
+
+(define factorial (Y almost-factorial))
 
 (define new-entry build)
 
@@ -1474,16 +1711,16 @@ caviar
                                                 table-f)))))))
 
 (lookup-in-table
-  'entree
-  '(((appetizer entree beverage) (pate boeuf vin))
-    ((beverage dessert) ((food is) (number one with us))))
-  (λ (x) x))
+ 'entree
+ '(((appetizer entree beverage) (pate boeuf vin))
+   ((beverage dessert) ((food is) (number one with us))))
+ (λ (x) x))
 
 (lookup-in-table
-  'entree
-  '(((entree dessert) (spaghetti spumoni))
-    ((appetizer entree beverage) (food tastes good)))
-  (λ (x) x))
+ 'entree
+ '(((entree dessert) (spaghetti spumoni))
+   ((appetizer entree beverage) (food tastes good)))
+ (λ (x) x))
 
 (car (quote (a b c)))
 
@@ -1710,7 +1947,7 @@ caviar
 
 
 
-
+;; λ calculus
 
 (define succ
   (lambda (n)
@@ -1724,3 +1961,83 @@ caviar
       (lambda (f)
         (lambda (x)
           (m (f ((n f) x))))))))
+
+
+;;; https://mvanier.livejournal.com/2897.html
+(define almost-factorial
+  (lambda (f)
+    (lambda (n)
+      (if (= n 0)
+          1
+          (* n (f (- n 1)))))))
+
+(define almost-fibonacci
+  (lambda (f)
+    (lambda (n)
+      (cond ((= n 0) 0)
+            ((= n 1) 1)
+            (else (+ (f (- n 1)) (f (- n 2))))))))
+
+
+
+(define identity (lambda (x) x))
+(define factorial0 (almost-factorial identity))
+(factorial0 0)
+(define factorial1
+  (almost-factorial factorial0))
+(factorial1 1)
+(define factorial2
+  (almost-factorial factorial1))
+(factorial2 2)
+(define factorial3
+  (almost-factorial factorial2))
+(factorial3 3)
+(define factorial4
+  (almost-factorial factorial3))
+(factorial4 4)
+
+(define factorial5 (almost-factorial factorial4))
+(factorial5 5)
+
+
+(define factorial1 
+  (almost-factorial
+   (almost-factorial identity)))
+
+(define factorial2
+  (almost-factorial
+   (almost-factorial
+    (almost-factorial identity))))
+
+(define factorial3
+  (almost-factorial
+   (almost-factorial
+    (almost-factorial
+     (almost-factorial identity)))))
+
+(define factorial4
+  (almost-factorial
+   (almost-factorial
+    (almost-factorial
+     (almost-factorial
+      (almost-factorial identity))))))
+
+(define factorial5
+  (almost-factorial
+   (almost-factorial
+    (almost-factorial
+     (almost-factorial
+      (almost-factorial
+       (almost-factorial identity)))))))
+
+;; maybe...
+(define factorial-infinity
+  (almost-factorial
+   (almost-factorial
+    (almost-factorial
+     ...))))
+
+;; Fixpoints of functions
+
+
+
